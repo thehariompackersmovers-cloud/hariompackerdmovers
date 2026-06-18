@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Hariom Packers – Quotation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --brand:#1a3c5e;--brand2:#2563a8;--gold:#d4900a;--gold-lt:#fff8e8;
+  --green:#166534;--red:#991b1b;--orange:#c2410c;
+  --surface:#f1f5f9;--card:#ffffff;--border:#e2e8f0;
+  --text:#1e293b;--muted:#64748b;--radius:14px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--surface);color:var(--text);min-height:100vh;padding-bottom:100px;}
+.hdr{background:linear-gradient(135deg,var(--brand) 0%,var(--brand2) 100%);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.hdr-icon{width:44px;height:44px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.hdr-text h1{font-size:16px;font-weight:800;letter-spacing:.3px;}
+.hdr-text p{font-size:11px;opacity:.75;margin-top:1px;}
+.hdr-badge{margin-left:auto;background:rgba(255,255,255,0.15);border-radius:10px;padding:6px 14px;text-align:center;flex-shrink:0;}
+.hdr-badge .num{font-size:18px;font-weight:900;color:var(--gold);line-height:1;}
+.hdr-badge .lbl{font-size:9px;opacity:.7;text-transform:uppercase;letter-spacing:.5px;}
+.steps{display:flex;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.steps::-webkit-scrollbar{display:none;}
+.step-btn{flex:1;min-width:60px;padding:10px 4px 8px;border:none;background:none;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.step-btn .s-icon{font-size:16px;}
+.step-btn.active{color:var(--brand2);border-bottom-color:var(--brand2);}
+.page{display:none;padding:16px;}
+.page.active{display:block;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.card-hd{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--brand2);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;border:2px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;font-size:15px;font-family:inherit;color:var(--text);background:#fff;-webkit-appearance:none;appearance:none;outline:none;transition:border-color .18s,box-shadow .18s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 3px rgba(37,99,168,0.12);}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5;}
+.field.auto input{background:var(--gold-lt);border-color:var(--gold);font-weight:700;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.item-row{border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px;background:#fafcff;position:relative;}
+.item-row .item-num{font-size:10px;font-weight:800;color:var(--brand2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.item-row .remove-btn{position:absolute;top:10px;right:10px;background:#fee2e2;border:none;color:var(--red);width:28px;height:28px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.add-item-btn{width:100%;padding:14px;border:2px dashed var(--brand2);background:#f0f6ff;border-radius:var(--radius-sm);color:var(--brand2);font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;}
+.total-box{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+.total-box .t-label{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.5px;}
+.total-box .t-amount{font-size:32px;font-weight:900;margin:4px 0;letter-spacing:-1px;}
+.total-box .t-words{font-size:11px;opacity:.8;line-height:1.5;}
+.pay-split{background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;margin-top:10px;font-size:12px;}
+.pay-split-row{display:flex;justify-content:space-between;padding:3px 0;}
+.pay-split-row.highlight{font-weight:800;color:#fbbf24;}
+.fixed-box{background:#f0f4ff;border:1.5px dashed #93b4f0;border-radius:var(--radius-sm);padding:14px;font-size:12px;line-height:1.9;color:var(--brand);}
+.fixed-tag{display:inline-block;background:var(--brand);color:#fff;font-size:9px;padding:2px 8px;border-radius:20px;font-weight:800;margin-bottom:8px;letter-spacing:.5px;}
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,0.10);}
+.btn{flex:1;padding:15px 10px;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .12s;letter-spacing:.2px;}
+.btn:active{transform:scale(.96);}
+.btn-nav{background:var(--surface);color:var(--brand);border:2px solid var(--border);flex:0 0 52px;font-size:20px;padding:0;}
+.btn-next{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 4px 14px rgba(26,60,94,0.3);}
+.btn-pdf{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;box-shadow:0 4px 14px rgba(185,28,28,0.3);}
+.btn-save{background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;box-shadow:0 4px 14px rgba(22,101,52,0.3);}
+.btn-xls{background:linear-gradient(135deg,#15803d,#166534);color:#fff;}
+.btn-reset{background:var(--surface);color:var(--muted);border:2px solid var(--border);flex:0 0 52px;font-size:20px;padding:0;}
+.btn-files{background:linear-gradient(135deg,var(--orange),#ea580c);color:#fff;}
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;overflow-y:auto;}
+#modal.show{display:block;}
+.modal-inner{background:#fff;margin:16px;border-radius:var(--radius);overflow:hidden;}
+.modal-hdr{background:var(--brand);color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr h2{font-size:15px;font-weight:800;}
+.modal-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;}
+#preview-area{padding:14px;overflow-x:auto;}
+.modal-foot{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--surface);flex-wrap:wrap;}
+.modal-foot .btn{font-size:12px;padding:12px 8px;}
+.sum-highlight{background:var(--brand);color:#fff;border-radius:var(--radius-sm);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.sum-highlight .sh-l{font-size:12px;opacity:.8;}
+.sum-highlight .sh-r{font-size:24px;font-weight:900;}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.sum-row:last-child{border-bottom:none;}
+.sum-row .sk{color:var(--muted);font-size:12px;}
+.sum-row .sv{font-weight:700;text-align:right;max-width:65%;}
+/* FILE MANAGER */
+.fm-card{border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:#fff;overflow:hidden;}
+.fm-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
+.fm-header:active{background:#f8faff;}
+.fm-no{font-size:15px;font-weight:900;color:var(--brand2);min-width:50px;}
+.fm-info{flex:1;min-width:0;}
+.fm-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fm-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.fm-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;}
+.fm-amt{font-size:13px;font-weight:800;color:var(--green);}
+.fm-arrow{font-size:10px;color:var(--muted);}
+.fm-actions{border-top:1px dashed var(--border);padding:12px 14px;background:#fafcff;}
+.fm-filename{font-size:10px;color:var(--muted);font-family:monospace;margin-bottom:10px;word-break:break-all;}
+.fm-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.fm-btn{padding:9px 13px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;}
+.fm-edit{background:#dbeafe;color:#1d4ed8;}
+.fm-view{background:#f0fdf4;color:#166534;}
+.fm-pdf{background:#fee2e2;color:#991b1b;}
+.fm-xls{background:#dcfce7;color:#15803d;}
+.fm-del{background:#fef9c3;color:#854d0e;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-state .e-icon{font-size:48px;margin-bottom:12px;}
+.cloud-status{font-size:11px;padding:8px 14px;border-radius:6px;margin-bottom:12px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.cloud-ok{background:#dcfce7;color:#166534;}
+.cloud-err{background:#fee2e2;color:#991b1b;}
+.cloud-loading{background:#fef9c3;color:#854d0e;}
+.setup-box{background:#fffbeb;border:2px solid #fcd34d;border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;}
+.setup-box h3{font-size:13px;font-weight:800;color:#92400e;margin-bottom:8px;}
+.setup-box p{font-size:12px;color:#78350f;line-height:1.7;}
+.setup-box input{margin-top:10px;width:100%;border:2px solid #fcd34d;border-radius:6px;padding:10px 12px;font-size:13px;font-family:inherit;outline:none;}
+.setup-box button{margin-top:8px;width:100%;padding:11px;background:var(--gold);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:800;cursor:pointer;}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a3c5e;color:#fff;padding:12px 24px;border-radius:30px;font-weight:700;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+#pdf-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9000;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+#pdf-overlay.show{display:flex;}
+#pdf-overlay .pdf-msg{color:#fff;font-size:16px;font-weight:800;}
+#pdf-overlay .pdf-sub{color:rgba(255,255,255,0.7);font-size:13px;}
+</style>
+</head>
+<body>
+
+<!-- PDF OVERLAY -->
+<div id="pdf-overlay">
+  <div style="font-size:48px;">📄</div>
+  <div class="pdf-msg">Generating PDF...</div>
+  <div class="pdf-sub">Please wait a moment</div>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-icon">📦</div>
+  <div class="hdr-text"><h1>Hariom Packers & Movers</h1><p>Quotation Generator · Varanasi</p></div>
+  <div class="hdr-badge"><div class="num" id="hdr-num">—</div><div class="lbl">Q.NO</div></div>
+</div>
+
+<!-- STEP TABS -->
+<div class="steps">
+  <button class="step-btn active" onclick="goStep(1)" id="stab1"><span class="s-icon">📋</span>Quote</button>
+  <button class="step-btn" onclick="goStep(2)" id="stab2"><span class="s-icon">👤</span>Buyer</button>
+  <button class="step-btn" onclick="goStep(3)" id="stab3"><span class="s-icon">📍</span>Route</button>
+  <button class="step-btn" onclick="goStep(4)" id="stab4"><span class="s-icon">📦</span>Items</button>
+  <button class="step-btn" onclick="goStep(5)" id="stab5"><span class="s-icon">💰</span>Amount</button>
+  <button class="step-btn" onclick="goStep(6)" id="stab6"><span class="s-icon">✅</span>Review</button>
+  <button class="step-btn" onclick="goStep(7)" id="stab7"><span class="s-icon">💾</span>Files</button>
+</div>
+
+<!-- PAGE 1: QUOTE -->
+<div class="page active" id="page1">
+  <div id="setup-box" class="setup-box" style="display:none;">
+    <h3>☁️ Connect to Google Sheets (One-time setup)</h3>
+    <p>Paste your Google Apps Script URL below to sync quotations across all devices — your phone, boss's phone, laptop.</p>
+    <input type="url" id="gs-url-input" placeholder="https://script.google.com/macros/s/...">
+    <button onclick="saveGSUrl()">✅ Connect Google Sheets</button>
+    <p style="margin-top:8px;font-size:11px;color:#92400e;">Don't have the URL yet? See the SETUP GUIDE file included with this app.</p>
+  </div>
+  <div id="cloud-status" class="cloud-status" style="display:none;"></div>
+  <div class="card">
+    <div class="card-hd">📋 Quotation Details</div>
+    <div class="row2">
+      <div class="field auto"><label>Q.NO (Auto)</label><input type="number" id="serial_no" inputmode="numeric" min="1" oninput="refreshQNo()"></div>
+      <div class="field auto"><label>Q. Date</label><input type="date" id="q_date"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Shifting Date</label><input type="text" id="shift_date" placeholder="7 OR 8 JUNE 2026"></div>
+      <div class="field"><label>Surveyor Name</label><input type="text" id="surveyor" placeholder="S.P" autocomplete="off"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Lorry No. &amp; Type</label><input type="text" id="lorry_no" placeholder="709 / A TYPE" style="text-transform:uppercase;" autocomplete="off"></div>
+      <div class="field"><label>Enquiry Date / Name</label><input type="text" id="enquiry" placeholder="Leave blank if N/A" autocomplete="off"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔒 Fixed Company Details</div>
+    <div class="fixed-box">
+      <span class="fixed-tag">AUTO-FILLED · DO NOT CHANGE</span><br>
+      <b>THE HARIOM PACKERS &amp; MOVERS</b><br>
+      10/33 Maqbool Alam Road, Varanasi<br>
+      📞 9415459710, 9919431699, 0542-2988669<br>
+      ✉️ thehariompackersindia@gmail.com<br>
+      GST: 09DMZPS9113Q1ZL | ISO 9001:2015
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: BUYER -->
+<div class="page" id="page2">
+  <div class="card">
+    <div class="card-hd">👤 Buyer Details</div>
+    <div class="field"><label>Full Name</label><input type="text" id="buyer_name" placeholder="Mr. Deepak Maurya" autocomplete="off"></div>
+    <div class="field"><label>Mobile Number</label><input type="tel" id="buyer_mobile" inputmode="tel" placeholder="9455304642"></div>
+    <div class="field"><label>FROM Address (Pickup)</label><textarea id="from_addr" placeholder="I.M.B Sarnath Varanasi"></textarea></div>
+    <div class="field"><label>TO Address (Delivery)</label><textarea id="to_addr" placeholder="Vikas Nagar Sector-3 Lucknow"></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🏠 Floor Details</div>
+    <div class="row2">
+      <div class="field"><label>From Floor</label><input type="text" id="from_floor" placeholder="N/A or 2nd Floor"></div>
+      <div class="field"><label>To Floor</label><input type="text" id="to_floor" placeholder="N/A or 3rd Floor"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>From Lift?</label><select id="from_lift"><option value="WITHOUT LIFT">Without Lift</option><option value="WITH LIFT">With Lift</option></select></div>
+      <div class="field"><label>To Lift?</label><select id="to_lift"><option value="WITHOUT LIFT">Without Lift</option><option value="WITH LIFT">With Lift</option></select></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: ROUTE -->
+<div class="page" id="page3">
+  <div class="card">
+    <div class="card-hd">📍 Route & Vehicle</div>
+    <div class="row2">
+      <div class="field"><label>From City</label><input type="text" id="from_city" placeholder="VARANASI" style="text-transform:uppercase;" value="VARANASI"></div>
+      <div class="field"><label>To City</label><input type="text" id="to_city" placeholder="LUCKNOW" style="text-transform:uppercase;"></div>
+    </div>
+    <div class="field"><label>No Entry Zone? (Loading Point)</label><select id="no_entry"><option value="NO">NO</option><option value="YES">YES</option></select></div>
+    <div class="row2">
+      <div class="field"><label>Distance at Loading (Mtrs)</label><input type="text" id="dist_load" placeholder="Leave blank if N/A"></div>
+      <div class="field"><label>Distance at Unloading (Mtrs)</label><input type="text" id="dist_unload" placeholder="Leave blank if N/A"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: ITEMS -->
+<div class="page" id="page4">
+  <div class="card">
+    <div class="card-hd">📦 Particulars / Items</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Add one or more items. Rate is optional.</p>
+    <div id="items-container"></div>
+    <button class="add-item-btn" onclick="addItem()">+ Add Another Item</button>
+  </div>
+</div>
+
+<!-- PAGE 5: AMOUNT -->
+<div class="page" id="page5">
+  <div class="card">
+    <div class="card-hd">💰 Amount & Payment</div>
+    <div class="field"><label>GST Note on Bill</label>
+      <select id="gst_note">
+        <option value="5 % GST EXTRA ON THE BILL">5% GST EXTRA ON THE BILL</option>
+        <option value="12 % GST EXTRA ON THE BILL">12% GST EXTRA ON THE BILL</option>
+        <option value="18 % GST EXTRA ON THE BILL">18% GST EXTRA ON THE BILL</option>
+        <option value="">No GST Note</option>
+      </select>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Payment 1 % (Loading)</label><input type="number" id="pay1_pct" value="80" min="0" max="100" oninput="calcSplit()"></div>
+      <div class="field"><label>Payment 2 % (After Work)</label><input type="number" id="pay2_pct" value="20" min="0" max="100" oninput="calcSplit()"></div>
+    </div>
+    <div class="field"><label>Additional Remarks</label><input type="text" id="remarks" placeholder="e.g. SHIFTING OF HOUSE HOLD GOODS"></div>
+    <div class="field"><label>Packing Date &amp; Time</label><input type="text" id="pack_date" placeholder="Leave blank if not decided"></div>
+    <div class="field"><label>Date of Loading</label><input type="text" id="date_load" placeholder="Leave blank if not decided"></div>
+  </div>
+  <div class="total-box">
+    <div class="t-label">Grand Total</div>
+    <div class="t-amount" id="tb-total">₹0</div>
+    <div class="t-words" id="tb-words">—</div>
+    <div class="pay-split" id="pay-split-box">
+      <div class="pay-split-row highlight"><span>80% ON LOADING POINT</span><span id="sp-load">₹0</span></div>
+      <div class="pay-split-row"><span>20% AFTER WORK DONE</span><span id="sp-after">₹0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: REVIEW -->
+<div class="page" id="page6">
+  <div class="sum-highlight">
+    <div><div class="sh-l">Grand Total</div><div style="font-size:11px;opacity:.7;" id="sum-words-short">—</div></div>
+    <div class="sh-r" id="sum-total">₹0</div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <button class="btn btn-pdf" style="flex:1;" onclick="dlPDF()">📄 Download PDF</button>
+    <button class="btn btn-xls" style="flex:1;" onclick="dlExcel()">📊 Download Excel</button>
+    <button class="btn" style="flex:1;background:#f0f6ff;color:var(--brand);border:2px solid var(--border);" onclick="previewCurrent()">👁️ Preview</button>
+  </div>
+  <div class="card">
+    <div class="card-hd">📋 Quotation Info</div>
+    <div class="sum-row"><span class="sk">Q.NO</span><span class="sv" id="s-qno"></span></div>
+    <div class="sum-row"><span class="sk">Date</span><span class="sv" id="s-date"></span></div>
+    <div class="sum-row"><span class="sk">Shifting Date</span><span class="sv" id="s-shift"></span></div>
+    <div class="sum-row"><span class="sk">Lorry No.</span><span class="sv" id="s-lorry"></span></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">👤 Buyer</div>
+    <div class="sum-row"><span class="sk">Name</span><span class="sv" id="s-bname"></span></div>
+    <div class="sum-row"><span class="sk">Mobile</span><span class="sv" id="s-bmob"></span></div>
+    <div class="sum-row"><span class="sk">Pickup</span><span class="sv" id="s-bfrom"></span></div>
+    <div class="sum-row"><span class="sk">Delivery</span><span class="sv" id="s-bto"></span></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">📍 Route</div>
+    <div class="sum-row"><span class="sk">Route</span><span class="sv" id="s-route"></span></div>
+    <div class="sum-row"><span class="sk">Items</span><span class="sv" id="s-items"></span></div>
+    <div class="sum-row"><span class="sk">Grand Total</span><span class="sv" id="s-amt"></span></div>
+  </div>
+</div>
+
+<!-- PAGE 7: SAVED FILES -->
+<div class="page" id="page7">
+  <div class="card">
+    <div class="card-hd">💾 My Saved Quotations</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input type="text" id="saved-search" placeholder="🔍 Search by name, Q.No, route..." oninput="renderSaved()" style="flex:1;border:2px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;font-family:inherit;outline:none;">
+      <button onclick="syncFromCloud()" style="padding:10px 14px;background:var(--brand2);color:#fff;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:13px;">☁️ Sync</button>
+    </div>
+    <div id="cloud-status2" class="cloud-status" style="display:none;"></div>
+    <div id="saved-count" style="font-size:11px;color:var(--muted);margin-bottom:10px;"></div>
+    <div id="saved-list"></div>
+  </div>
+</div>
+
+<!-- ACTION BAR -->
+<div class="action-bar" id="action-bar"></div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-inner">
+    <div class="modal-hdr"><h2>📄 Quotation Preview</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div id="preview-area"></div>
+    <div class="modal-foot">
+      <button class="btn btn-pdf" id="modal-pdf-btn" onclick="dlPDF()">📄 PDF</button>
+      <button class="btn btn-xls" id="modal-xls-btn" onclick="dlExcel()">📊 Excel</button>
+      <button class="btn btn-save" onclick="saveQuotation()">💾 Save</button>
+      <button class="btn" style="background:var(--surface);color:var(--brand);border:2px solid var(--border);flex:0 0 auto;padding:12px 14px;font-size:13px;" onclick="closeModal()">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CO={name:'THE HARIOM PACKERS & MOVERS',addr:'H.O.: 10/33 MAQBOOL ALAM ROAD VARANASI',mob:'9415459710, 9919431699, 0542-2988669',email:'thehariompackersindia@gmail.com',iso:'CERTIFIED ISO 9001 : 2015',gst:'09DMZPS9113Q1ZL',bank:'INDIAN OVERSEAS BANK',acc:'100202000001952',ifsc:'IOBA0001002'};
+const FORM_TYPE='QUOTATION';
+
+// ══════════════════════════════════════════
+// GOOGLE SHEETS CONFIG
+// ══════════════════════════════════════════
+// User sets this once — stored in localStorage
+let GS_URL = localStorage.getItem('hariom_gs_url') || '';
+let GS_CONFIGURED = !!GS_URL;
+
+function saveGSUrl() {
+  const url = document.getElementById('gs-url-input').value.trim();
+  if (!url || !url.includes('script.google.com')) {
+    showToast('❌ Invalid URL — please paste the correct Google Script URL');
+    return;
+  }
+  GS_URL = url;
+  GS_CONFIGURED = true;
+  localStorage.setItem('hariom_gs_url', url);
+  document.getElementById('setup-box').style.display = 'none';
+  showCloudStatus('ok', '✅ Google Sheets connected!');
+  showToast('✅ Connected! Now your data syncs to Google Sheets.');
+  loadFromCloud();
+}
+
+function showCloudStatus(type, msg) {
+  const el = document.getElementById('cloud-status');
+  if (!el) return;
+  el.className = 'cloud-status cloud-' + type;
+  el.textContent = msg;
+  el.style.display = 'flex';
+}
+
+// ── Save record to Google Sheets ──
+async function saveToCloud(record) {
+  if (!GS_CONFIGURED) return false;
+  try {
+    await fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({action: 'save', record})
+    });
+    return true;
+  } catch(e) {
+    console.warn('Cloud save failed:', e);
+    return false;
+  }
+}
+
+// ── Load all records from Google Sheets ──
+async function loadFromCloud() {
+  if (!GS_CONFIGURED) return [];
+  showCloudStatus('loading', '⏳ Syncing from cloud...');
+  try {
+    const resp = await fetch(GS_URL + '?action=getAll&sheet=SHEET_NAME', {mode:'cors'});
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    showCloudStatus('ok', '✅ Synced — ' + (data.records||[]).length + ' records');
+    return data.records || [];
+  } catch(e) {
+    showCloudStatus('err', '⚠️ Cloud sync failed — showing local data');
+    return [];
+  }
+}
+
+// ── Delete from Google Sheets ──
+async function deleteFromCloud(id) {
+  if (!GS_CONFIGURED) return;
+  try {
+    await fetch(GS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({action: 'delete', id})
+    });
+  } catch(e) { console.warn('Cloud delete failed:', e); }
+}
+
+// ══════════════════════════════════════════
+// NUMBER TO WORDS
+// ══════════════════════════════════════════
+function n2w(n) {
+  if (!n || n === 0) return 'Rupees Zero Only';
+  const a=['','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE',
+    'TEN','ELEVEN','TWELVE','THIRTEEN','FOURTEEN','FIFTEEN','SIXTEEN',
+    'SEVENTEEN','EIGHTEEN','NINETEEN'];
+  const b=['','','TWENTY','THIRTY','FORTY','FIFTY','SIXTY','SEVENTY','EIGHTY','NINETY'];
+  function iw(x) {
+    if(x===0)return '';
+    if(x<20)return a[x];
+    if(x<100)return b[Math.floor(x/10)]+(x%10?' '+a[x%10]:'');
+    if(x<1000)return a[Math.floor(x/100)]+' HUNDRED'+(x%100?' AND '+iw(x%100):'');
+    if(x<100000)return iw(Math.floor(x/1000))+' THOUSAND'+(x%1000?' '+iw(x%1000):'');
+    if(x<10000000)return iw(Math.floor(x/100000))+' LAKH'+(x%100000?' '+iw(x%100000):'');
+    return iw(Math.floor(x/10000000))+' CRORE'+(x%10000000?' '+iw(x%10000000):'');
+  }
+  const int=Math.floor(n), dec=Math.round((n-int)*100);
+  return 'Rupees '+iw(int).trim()+(dec?' and '+iw(dec)+' Paise':'')+' Only';
+}
+
+function fmt(n){return (n||0).toLocaleString('en-IN',{minimumFractionDigits:2});}
+function fmtI(n){return (n||0).toLocaleString('en-IN');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+let toastTimer = null;
+function showToast(msg, dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+// ══════════════════════════════════════════
+// PDF OVERLAY
+// ══════════════════════════════════════════
+function showPdfOverlay(show) {
+  const el = document.getElementById('pdf-overlay');
+  if(el) el.classList.toggle('show', show);
+}
+
+
+// ══════════════════════════════════════════
+// LOCAL STORAGE KEYS
+// ══════════════════════════════════════════
+const STORAGE_KEY='hariom_quot_serial';
+const SAVED_KEY='hariom_quotations';
+let currentStep=1,itemCount=0;
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('q_date').value=new Date().toISOString().split('T')[0];
+  const last=parseInt(localStorage.getItem(STORAGE_KEY)||'5326');
+  document.getElementById('serial_no').value=last+1;
+  refreshQNo(); addItem(); calcSplit(); renderActionBar(); renderSaved();
+  if(GS_CONFIGURED){loadFromCloud().then(records=>{if(records.length)mergeCloudRecords(records);});}
+  else{document.getElementById('setup-box').style.display='block';}
+});
+
+function refreshQNo(){const n=document.getElementById('serial_no').value||'—';document.getElementById('hdr-num').textContent=n;}
+
+// ══════════════════════════════════════════
+// ITEMS
+// ══════════════════════════════════════════
+function addItem(){
+  itemCount++;const id=itemCount;
+  const c=document.getElementById('items-container');
+  const div=document.createElement('div');
+  div.className='item-row';div.id='item-'+id;
+  div.innerHTML=`<div class="item-num">Item ${id}</div>
+    ${id>1?`<button class="remove-btn" onclick="removeItem(${id})">✕</button>`:''}
+    <div class="field"><label>Particulars / Description</label>
+      <input type="text" id="item_desc_${id}" placeholder="TRANSPORTATION, PACKING LOADING & UNLOADING CHARGE" style="text-transform:uppercase;"></div>
+    <div class="row2">
+      <div class="field"><label>Rate (₹) — Optional</label>
+        <input type="number" id="item_rate_${id}" inputmode="decimal" placeholder="Leave blank" min="0" oninput="calcSplit()"></div>
+      <div class="field"><label>Amount (₹)</label>
+        <input type="number" id="item_amt_${id}" inputmode="decimal" placeholder="23500" min="0" oninput="calcSplit()"></div>
+    </div>`;
+  c.appendChild(div);
+  if(id>1)div.scrollIntoView({behavior:'smooth',block:'start'});
+  calcSplit();
+}
+function removeItem(id){const el=document.getElementById('item-'+id);if(el)el.remove();calcSplit();}
+
+function getItems(){
+  const items=[];
+  document.querySelectorAll('.item-row').forEach((row,idx)=>{
+    const m=row.id.match(/item-(\d+)/);if(!m)return;const n=m[1];
+    const desc=(document.getElementById('item_desc_'+n)?.value||'').trim().toUpperCase();
+    const rate=parseFloat(document.getElementById('item_rate_'+n)?.value)||0;
+    const amt=parseFloat(document.getElementById('item_amt_'+n)?.value)||0;
+    if(desc||amt)items.push({desc:desc||'TRANSPORTATION, PACKING LOADING & UNLOADING CHARGE',rate,amt,num:idx+1});
+  });
+  return items;
+}
+function getGrandTotal(){return getItems().reduce((s,i)=>s+i.amt,0);}
+
+// ══════════════════════════════════════════
+// CALC
+// ══════════════════════════════════════════
+function calcSplit(){
+  const total=getGrandTotal();
+  const p1=parseFloat(document.getElementById('pay1_pct')?.value)||80;
+  const p2=parseFloat(document.getElementById('pay2_pct')?.value)||20;
+  const a1=Math.round(total*p1/100),a2=Math.round(total*p2/100);
+  const tb=document.getElementById('tb-total');if(tb)tb.textContent='₹'+fmt(total);
+  const tw=document.getElementById('tb-words');if(tw)tw.textContent=n2w(total);
+  const sl=document.getElementById('sp-load');if(sl)sl.textContent='₹'+fmt(a1);
+  const sa=document.getElementById('sp-after');if(sa)sa.textContent='₹'+fmt(a2);
+  const sb=document.getElementById('pay-split-box');
+  if(sb){const rows=sb.querySelectorAll('.pay-split-row');
+    if(rows[0])rows[0].querySelector('span:first-child').textContent=p1+'% ON LOADING POINT';
+    if(rows[1])rows[1].querySelector('span:first-child').textContent=p2+'% AFTER WORK DONE';}
+  return{total,p1,p2,a1,a2};
+}
+
+// ══════════════════════════════════════════
+// GET DATA
+// ══════════════════════════════════════════
+function getData(){
+  const{total,p1,p2,a1,a2}=calcSplit();
+  const serial=parseInt(document.getElementById('serial_no').value)||1;
+  const rawDate=document.getElementById('q_date').value;
+  const dispDate=rawDate?new Date(rawDate).toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'}):'';
+  const bname=(document.getElementById('buyer_name').value||'Customer').trim();
+  const from=(document.getElementById('from_city').value||'VARANASI').toUpperCase().trim();
+  const to=(document.getElementById('to_city').value||'').toUpperCase().trim();
+  const namePart=bname.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/i,'').replace(/\s+/g,'_').replace(/[^A-Za-z0-9_]/g,'');
+  const filename=`${String(serial).padStart(4,'0')}_${namePart}_${from.slice(0,3)}_TO_${to.slice(0,3)||'???'}_${rawDate}`;
+  return{
+    type:'QUOTATION',serial,q_no:String(serial),q_date:dispDate,raw_date:rawDate,
+    shift_date:document.getElementById('shift_date').value||'',
+    surveyor:document.getElementById('surveyor').value||'',
+    lorry_no:document.getElementById('lorry_no').value.toUpperCase()||'',
+    enquiry:document.getElementById('enquiry').value||'',
+    buyer_name:bname,buyer_mobile:document.getElementById('buyer_mobile').value||'',
+    from_addr:document.getElementById('from_addr').value||'',
+    to_addr:document.getElementById('to_addr').value||'',
+    from_floor:document.getElementById('from_floor').value||'N/A',
+    to_floor:document.getElementById('to_floor').value||'N/A',
+    from_lift:document.getElementById('from_lift').value,
+    to_lift:document.getElementById('to_lift').value,
+    from_city:from,to_city:to,route:`${from} TO ${to}`,
+    no_entry:document.getElementById('no_entry').value,
+    dist_load:document.getElementById('dist_load').value||'',
+    dist_unload:document.getElementById('dist_unload').value||'',
+    items:getItems(),total,p1,p2,a1,a2,
+    gst_note:document.getElementById('gst_note').value,
+    remarks:document.getElementById('remarks').value||'',
+    pack_date:document.getElementById('pack_date').value||'',
+    date_load:document.getElementById('date_load').value||'',filename
+  };
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goStep(n){
+  document.getElementById('page'+currentStep).classList.remove('active');
+  document.getElementById('stab'+currentStep).classList.remove('active');
+  currentStep=n;
+  document.getElementById('page'+n).classList.add('active');
+  document.getElementById('stab'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===6)fillSummary();
+  if(n===7)renderSaved();
+  if(n===5)calcSplit();
+  renderActionBar();
+}
+
+function renderActionBar(){
+  const bar=document.getElementById('action-bar');
+  if(currentStep===1){
+    bar.innerHTML=`<button class="btn btn-next" onclick="goStep(2)">Next: Buyer →</button>
+      <button class="btn btn-files" onclick="goStep(7)" style="flex:0 0 auto;padding:15px 14px;font-size:12px;">📁 Files</button>`;
+  } else if(currentStep===6){
+    bar.innerHTML=`
+      <button class="btn btn-reset" onclick="resetForm()" style="flex:0 0 52px;font-size:20px;padding:0;">🔄</button>
+      <button class="btn btn-save" onclick="saveAndShowOptions()">💾 Save</button>
+      <button class="btn btn-pdf" onclick="dlPDF()">📄 PDF</button>
+      <button class="btn btn-xls" onclick="dlExcel()">📊 Excel</button>`;
+  } else if(currentStep===7){
+    bar.innerHTML=`<button class="btn btn-next" onclick="goStep(1)">← New Quotation</button>`;
+  } else {
+    const labels=['','','Route','Items','Amount','Review','',''][currentStep];
+    bar.innerHTML=`<button class="btn btn-nav" onclick="goStep(${currentStep-1})">←</button>
+      <button class="btn btn-next" onclick="goStep(${currentStep+1})">Next: ${labels} →</button>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════
+function fillSummary(){
+  const d=getData();
+  document.getElementById('sum-total').textContent='₹'+fmt(d.total);
+  document.getElementById('sum-words-short').textContent=n2w(d.total);
+  document.getElementById('s-qno').textContent=d.q_no;
+  document.getElementById('s-date').textContent=d.q_date;
+  document.getElementById('s-shift').textContent=d.shift_date||'—';
+  document.getElementById('s-lorry').textContent=d.lorry_no||'—';
+  document.getElementById('s-bname').textContent=d.buyer_name;
+  document.getElementById('s-bmob').textContent=d.buyer_mobile;
+  document.getElementById('s-bfrom').textContent=d.from_addr||'—';
+  document.getElementById('s-bto').textContent=d.to_addr||'—';
+  document.getElementById('s-route').textContent=d.route;
+  document.getElementById('s-items').textContent=d.items.length+' item(s)';
+  document.getElementById('s-amt').textContent='₹'+fmt(d.total);
+}
+
+// ══════════════════════════════════════════
+// SAVE / CLOUD
+// ══════════════════════════════════════════
+async function saveQuotation(){
+  const d=getData();
+  let saved=JSON.parse(localStorage.getItem(SAVED_KEY)||'[]');
+  saved=saved.filter(q=>q.q_no!==d.q_no);
+  saved.unshift({q_no:d.q_no,q_date:d.q_date,raw_date:d.raw_date,buyer_name:d.buyer_name,
+    buyer_mobile:d.buyer_mobile,route:d.route,total:d.total,shift_date:d.shift_date,
+    lorry_no:d.lorry_no,filename:d.filename,full:d});
+  if(saved.length>500)saved=saved.slice(0,500);
+  localStorage.setItem(SAVED_KEY,JSON.stringify(saved));
+  localStorage.setItem(STORAGE_KEY,d.serial);
+  // Cloud sync
+  if(GS_CONFIGURED){
+    showToast('💾 Saved locally + syncing to cloud...',2000);
+    const ok=await saveToCloud(d);
+    if(ok)showToast('✅ Saved & synced to Google Sheets!');
+    else showToast('✅ Saved locally (cloud sync failed)');
+  } else {
+    showToast('💾 Saved! (#'+d.q_no+')');
+  }
+  return d;
+}
+
+async function saveAndShowOptions(){
+  await saveQuotation();
+}
+
+function mergeCloudRecords(records){
+  let saved=JSON.parse(localStorage.getItem(SAVED_KEY)||'[]');
+  const localIds=new Set(saved.map(s=>s.q_no));
+  records.forEach(r=>{
+    if(!localIds.has(r.q_no)){
+      saved.push({q_no:r.q_no,q_date:r.q_date,raw_date:r.raw_date,buyer_name:r.buyer_name,
+        buyer_mobile:r.buyer_mobile,route:r.route,total:r.total,shift_date:r.shift_date,
+        lorry_no:r.lorry_no,filename:r.filename,full:r});
+    }
+  });
+  saved.sort((a,b)=>parseInt(b.q_no)-parseInt(a.q_no));
+  localStorage.setItem(SAVED_KEY,JSON.stringify(saved));
+  renderSaved();
+  showToast('☁️ Synced '+records.length+' records from cloud');
+}
+
+// ══════════════════════════════════════════
+// RENDER SAVED (File Manager)
+// ══════════════════════════════════════════
+function renderSaved(){
+  const saved=JSON.parse(localStorage.getItem(SAVED_KEY)||'[]');
+  const el=document.getElementById('saved-list');
+  const countEl=document.getElementById('saved-count');
+  if(!el)return;
+  const srch=(document.getElementById('saved-search')||{value:''}).value.toLowerCase();
+  const filtered=srch?saved.filter(s=>
+    (s.buyer_name||'').toLowerCase().includes(srch)||
+    String(s.q_no).includes(srch)||
+    (s.route||'').toLowerCase().includes(srch)
+  ):saved;
+  if(countEl)countEl.textContent=saved.length+' total · '+filtered.length+' shown';
+  if(saved.length===0){
+    el.innerHTML=`<div class="empty-state"><div class="e-icon">📋</div><p>No quotations saved yet.<br>Create and save your first one!</p></div>`;
+    return;
+  }
+  if(filtered.length===0){
+    el.innerHTML=`<div class="empty-state"><div class="e-icon">🔍</div><p>No results for that search.</p></div>`;
+    return;
+  }
+  el.innerHTML=filtered.map(rec=>`
+    <div class="fm-card" id="fmc-${rec.q_no}">
+      <div class="fm-header" onclick="toggleCard('${rec.q_no}')">
+        <div class="fm-no">#${rec.q_no}</div>
+        <div class="fm-info">
+          <div class="fm-name">${esc(rec.buyer_name)}</div>
+          <div class="fm-sub">${rec.route||''} · ${rec.q_date||''}</div>
+        </div>
+        <div class="fm-right">
+          <div class="fm-amt">₹${fmtI(Math.round(rec.total||0))}</div>
+          <div class="fm-arrow" id="arr-${rec.q_no}">▼</div>
+        </div>
+      </div>
+      <div class="fm-actions" id="fma-${rec.q_no}" style="display:none;">
+        <div class="fm-filename">📁 ${rec.filename||rec.q_no}</div>
+        <div class="fm-btns">
+          <button class="fm-btn fm-edit" onclick="loadQuotation('${rec.q_no}')">✏️ Edit</button>
+          <button class="fm-btn fm-view" onclick="previewSaved('${rec.q_no}')">👁️ View</button>
+          <button class="fm-btn fm-pdf" onclick="dlSavedPDF('${rec.q_no}')">📄 PDF</button>
+          <button class="fm-btn fm-xls" onclick="dlSavedExcel('${rec.q_no}')">📊 Excel</button>
+          <button class="fm-btn fm-del" onclick="deleteSaved('${rec.q_no}')">🗑️ Del</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleCard(qno){
+  const a=document.getElementById('fma-'+qno);
+  const ar=document.getElementById('arr-'+qno);
+  if(!a)return;
+  const open=a.style.display==='none';
+  a.style.display=open?'block':'none';
+  ar.textContent=open?'▲':'▼';
+}
+
+function previewSaved(qno){
+  const rec=getSavedRecord(qno);if(!rec)return;
+  document.getElementById('preview-area').innerHTML=buildPreviewHTML(rec.full);
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('modal-pdf-btn').onclick=()=>dlPDF(rec.full);
+  document.getElementById('modal-xls-btn').onclick=()=>dlExcel(rec.full);
+}
+
+function dlSavedPDF(qno){const rec=getSavedRecord(qno);if(rec)dlPDF(rec.full);}
+function dlSavedExcel(qno){const rec=getSavedRecord(qno);if(rec)dlExcel(rec.full);}
+
+function getSavedRecord(qno){
+  const saved=JSON.parse(localStorage.getItem(SAVED_KEY)||'[]');
+  const rec=saved.find(s=>String(s.q_no)===String(qno));
+  if(!rec||!rec.full){showToast('❌ Record not found');return null;}
+  return rec;
+}
+
+async function deleteSaved(qno){
+  if(!confirm('Delete Quotation #'+qno+'?'))return;
+  let saved=JSON.parse(localStorage.getItem(SAVED_KEY)||'[]');
+  saved=saved.filter(s=>s.q_no!==String(qno));
+  localStorage.setItem(SAVED_KEY,JSON.stringify(saved));
+  await deleteFromCloud(qno);
+  renderSaved();
+  showToast('🗑️ Deleted #'+qno);
+}
+
+function loadQuotation(qno){
+  const rec=getSavedRecord(qno);if(!rec)return;
+  const d=rec.full;
+  document.getElementById('serial_no').value=d.serial;
+  document.getElementById('q_date').value=d.raw_date||'';
+  document.getElementById('shift_date').value=d.shift_date||'';
+  document.getElementById('surveyor').value=d.surveyor||'';
+  document.getElementById('lorry_no').value=d.lorry_no||'';
+  document.getElementById('enquiry').value=d.enquiry||'';
+  document.getElementById('buyer_name').value=d.buyer_name||'';
+  document.getElementById('buyer_mobile').value=d.buyer_mobile||'';
+  document.getElementById('from_addr').value=d.from_addr||'';
+  document.getElementById('to_addr').value=d.to_addr||'';
+  document.getElementById('from_floor').value=d.from_floor||'';
+  document.getElementById('to_floor').value=d.to_floor||'';
+  document.getElementById('from_lift').value=d.from_lift||'WITHOUT LIFT';
+  document.getElementById('to_lift').value=d.to_lift||'WITHOUT LIFT';
+  document.getElementById('from_city').value=d.from_city||'VARANASI';
+  document.getElementById('to_city').value=d.to_city||'';
+  document.getElementById('no_entry').value=d.no_entry||'NO';
+  document.getElementById('dist_load').value=d.dist_load||'';
+  document.getElementById('dist_unload').value=d.dist_unload||'';
+  document.getElementById('gst_note').value=d.gst_note||'';
+  document.getElementById('pay1_pct').value=d.p1||80;
+  document.getElementById('pay2_pct').value=d.p2||20;
+  document.getElementById('remarks').value=d.remarks||'';
+  document.getElementById('pack_date').value=d.pack_date||'';
+  document.getElementById('date_load').value=d.date_load||'';
+  refreshQNo();
+  document.getElementById('items-container').innerHTML='';
+  itemCount=0;
+  (d.items||[]).forEach(item=>{
+    addItem();const n=itemCount;
+    document.getElementById('item_desc_'+n).value=item.desc||'';
+    document.getElementById('item_rate_'+n).value=item.rate||'';
+    document.getElementById('item_amt_'+n).value=item.amt||'';
+  });
+  if(!(d.items||[]).length)addItem();
+  calcSplit();goStep(1);
+  showToast('📂 Loaded #'+qno+' — edit and save again');
+}
+
+// ══════════════════════════════════════════
+// PREVIEW (in-app mini preview)
+// ══════════════════════════════════════════
+function buildPreviewHTML(d){
+  const items=(d.items||[]).map((item,i)=>`
+    <tr><td style="text-align:center;border:1px solid #ccc;">${i+1}</td>
+        <td style="border:1px solid #ccc;">${esc(item.desc)}</td>
+        <td style="text-align:right;border:1px solid #ccc;">${item.rate?'₹'+fmtI(item.rate):''}</td>
+        <td style="text-align:right;border:1px solid #ccc;">₹${fmtI(item.amt)}</td></tr>`).join('');
+  return `<div style="font-family:Arial,sans-serif;font-size:11px;border:2px solid #000;min-width:520px;">
+    <div style="background:#cc0000;color:#fff;text-align:center;font-size:16px;font-weight:bold;padding:6px;letter-spacing:3px;">QUOTATION</div>
+    <div style="display:flex;border-bottom:1.5px solid #000;">
+      <div style="flex:1;padding:8px 10px;border-right:1.5px solid #000;">
+        <b style="color:#1a3c5e;font-size:12px;">${CO.name}</b><br>
+        ${CO.addr}<br>${CO.mob}<br>
+        <span style="color:#2563a8;">${CO.email}</span>
+      </div>
+      <div style="width:42%;padding:8px 10px;font-size:10px;">
+        <div style="display:flex;justify-content:space-between;"><b>Q.NO</b><b>${d.q_no}</b></div>
+        <div style="display:flex;justify-content:space-between;"><b>DATE</b><span>${d.q_date}</span></div>
+        <div style="display:flex;justify-content:space-between;"><b>SHIFTING</b><span>${d.shift_date||'—'}</span></div>
+        <div style="display:flex;justify-content:space-between;"><b>LORRY</b><b style="background:#cc0000;color:#fff;padding:1px 4px;">${d.lorry_no||'—'}</b></div>
+      </div>
+    </div>
+    <div style="display:flex;border-bottom:1.5px solid #000;">
+      <div style="flex:1;padding:8px 10px;border-right:1.5px solid #000;">
+        <b>BUYER: ${esc(d.buyer_name)}</b><br>FROM: ${esc(d.from_addr)}<br>MOB: ${d.buyer_mobile}<br>TO: ${esc(d.to_addr)}
+      </div>
+      <div style="width:42%;padding:8px 10px;">
+        <div style="font-size:9px;color:#555;">DESTINATION THROUGH</div>
+        <div style="font-size:14px;font-weight:bold;color:#cc0000;">${d.route}</div>
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <tr style="background:#cc0000;color:#fff;"><th style="padding:4px 6px;border:1px solid #000;">Sl</th><th style="padding:4px 6px;border:1px solid #000;">Particulars</th><th style="padding:4px 6px;border:1px solid #000;">Rate</th><th style="padding:4px 6px;border:1px solid #000;">Amount</th></tr>
+      ${items}
+      <tr style="background:#f5f5f5;font-weight:bold;"><td colspan="3" style="text-align:right;border:1px solid #000;padding:4px 6px;">SUB TOTAL —</td><td style="text-align:right;border:1px solid #000;padding:4px 6px;">₹${fmtI(d.total)}.00</td></tr>
+      ${d.gst_note?`<tr><td colspan="3" style="border:1px solid #ccc;padding:3px 6px;color:#c00;font-style:italic;">${d.gst_note}</td><td style="border:1px solid #ccc;"></td></tr>`:''}
+      ${d.p1?`<tr><td colspan="2" style="border:1px solid #ccc;padding:3px 6px;"><span style="color:#cc0000;font-weight:bold;">${d.p1}% LOADING POINT</span> — ₹${fmtI(d.a1)}</td><td style="border:1px solid #ccc;"></td><td style="border:1px solid #ccc;"></td></tr>`:''}
+      <tr style="background:#1a3c5e;color:#fff;font-weight:bold;font-size:13px;"><td colspan="3" style="border:1px solid #000;padding:5px 6px;">GRAND TOTAL</td><td style="text-align:right;border:1px solid #000;padding:5px 6px;">₹${fmtI(d.total)}.00</td></tr>
+    </table>
+    <div style="padding:6px 10px;font-size:9.5px;"><b>AMOUNT IN WORDS:</b> ${n2w(d.total)}</div>
+    <div style="padding:5px 10px;font-size:9px;color:#cc0000;font-weight:bold;border-top:1px solid #eee;">NOTE: NO EXTRA MONEY (BAKSHISH) NEED TO GIVE LABOUR. ELECTRICIAN WORK NOT INCLUDED.</div>
+    <div style="background:#1a3c5e;color:#fff;text-align:center;padding:7px;font-size:13px;font-weight:bold;letter-spacing:2px;border-top:2px solid #000;">IBA BILL AVAILABLE</div>
+    <div style="padding:5px 10px;font-size:9px;text-align:center;color:#555;">GST: ${CO.gst} | Bank: ${CO.bank} | A/c: ${CO.acc} | ${CO.ifsc}</div>
+    <div style="padding:5px;font-size:8px;text-align:center;color:#777;border-top:1px solid #eee;">SUBJECT TO VARANASI JURISDICTION | Computer Generated Quotation</div>
+  </div>`;
+}
+
+function previewCurrent(){
+  const d=getData();
+  document.getElementById('preview-area').innerHTML=buildPreviewHTML(d);
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('modal-pdf-btn').onclick=()=>dlPDF(d);
+  document.getElementById('modal-xls-btn').onclick=()=>dlExcel(d);
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+
+// ══════════════════════════════════════════
+// SYNC FROM CLOUD
+// ══════════════════════════════════════════
+async function syncFromCloud(){
+  showToast('⏳ Syncing from cloud...',2000);
+  const records=await loadFromCloud();
+  if(records.length){mergeCloudRecords(records);}
+  else{showToast('ℹ️ No new records from cloud');}
+}
+
+// ══════════════════════════════════════════
+// RESET FORM
+// ══════════════════════════════════════════
+function resetForm(){
+  if(!confirm('Start a new quotation? Unsaved data will be lost.'))return;
+  const cur=parseInt(document.getElementById('serial_no').value)||5326;
+  ['shift_date','surveyor','lorry_no','enquiry','buyer_name','buyer_mobile',
+   'from_addr','to_addr','from_floor','to_floor','to_city',
+   'dist_load','dist_unload','remarks','pack_date','date_load'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('from_city').value='VARANASI';
+  document.getElementById('no_entry').value='NO';
+  document.getElementById('from_lift').value='WITHOUT LIFT';
+  document.getElementById('to_lift').value='WITHOUT LIFT';
+  document.getElementById('gst_note').value='5 % GST EXTRA ON THE BILL';
+  document.getElementById('pay1_pct').value=80;
+  document.getElementById('pay2_pct').value=20;
+  document.getElementById('items-container').innerHTML='';
+  itemCount=0;addItem();
+  document.getElementById('q_date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('serial_no').value=cur+1;
+  refreshQNo();calcSplit();goStep(1);
+  showToast('🔄 Ready for new quotation!');
+}
+
+
+// ══════════════════════════════════════════
+// PDF ENGINE — draws real PDF using jsPDF
+// ══════════════════════════════════════════
+function dlPDF(d) {
+  if (!d) d = getData();
+  showPdfOverlay(true);
+  setTimeout(() => {
+    try {
+      _drawQuotPDF(d);
+    } catch(e) {
+      showPdfOverlay(false);
+      showToast('❌ PDF Error: ' + e.message);
+      console.error(e);
+    }
+  }, 80);
+}
+
+function _drawQuotPDF(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
+  const PW = 210, PH = 297;
+  const ML = 8, MR = 8, MT = 8;
+  const CW = PW - ML - MR; // content width = 194mm
+  let y = MT;
+
+  // ── Color helpers ──
+  const RED   = [204,0,0];
+  const NAVY  = [26,60,94];
+  const WHITE = [255,255,255];
+  const BLACK = [0,0,0];
+  const LGRAY = [245,245,245];
+  const DGRAY = [85,85,85];
+  const BLUE  = [37,99,168];
+
+  function setFont(style,sz,color){
+    doc.setFont('helvetica',style);
+    doc.setFontSize(sz);
+    doc.setTextColor(...(color||BLACK));
+  }
+  function rect(x,y,w,h,fill,stroke){
+    if(fill){doc.setFillColor(...fill);doc.rect(x,y,w,h,stroke?'FD':'F');}
+    else{doc.setDrawColor(...(stroke||BLACK));doc.rect(x,y,w,h,'S');}
+  }
+  function hline(x1,yy,x2,lw,color){
+    doc.setDrawColor(...(color||BLACK));
+    doc.setLineWidth(lw||0.3);
+    doc.line(x1,yy,x2,yy);
+  }
+  function vline(x,y1,y2,lw,color){
+    doc.setDrawColor(...(color||BLACK));
+    doc.setLineWidth(lw||0.3);
+    doc.line(x,y1,x,y2);
+  }
+  function cell(text,x,yy,w,h,opts={}){
+    const {fill,color,sz=9,style='normal',align='left',pad=1.5,wrap=false}=opts;
+    if(fill){rect(x,yy,w,h,fill);}
+    setFont(style,sz,color||BLACK);
+    const tx = align==='right'?x+w-pad:align==='center'?x+w/2:x+pad;
+    const ty = yy+h/2+sz*0.18;
+    if(wrap){
+      const lines = doc.splitTextToSize(String(text||''),w-pad*2);
+      lines.forEach((ln,i)=>doc.text(ln,tx,yy+(h/(lines.length+1))*(i+1)+sz*0.1,{align}));
+    } else {
+      doc.text(String(text||''),tx,ty,{align});
+    }
+  }
+
+  // ══ OUTER BORDER ══
+  doc.setDrawColor(...BLACK);
+  doc.setLineWidth(0.6);
+  doc.rect(ML,MT,CW,PH-MT-8,'S');
+
+  // ══ TITLE BAR ══
+  rect(ML,y,CW,8,RED);
+  setFont('bold',15,WHITE);
+  doc.text('QUOTATION',PW/2,y+5.5,{align:'center'});
+  y+=8;
+
+  // ══ TOP SECTION: Company left | Meta right ══
+  hline(ML,y,ML+CW,0.4);
+  const TOP_H = 38;
+  const LW = CW*0.55, RW = CW*0.45;
+  vline(ML+LW,y,y+TOP_H,0.4);
+
+  // Company block
+  let cy = y+3;
+  setFont('bold',10,NAVY); doc.text(CO.name,ML+2,cy); cy+=4.5;
+  setFont('normal',7.5,BLACK); doc.text(CO.addr,ML+2,cy); cy+=3.8;
+  doc.text(CO.mob+' \u260e',ML+2,cy); cy+=3.8;
+  setFont('normal',7.5,BLUE); doc.text(CO.email,ML+2,cy); cy+=3.8;
+  setFont('bold',7.5,BLACK); doc.text(CO.iso,ML+2,cy); cy+=3.8;
+  setFont('normal',7,DGRAY); doc.text("QUOTATION VALID FOR 7 DAY'S",ML+2,cy);
+
+  // Meta block (right side)
+  const RX = ML+LW;
+  const metaRows = [
+    ['Q.NO', d.q_no||''],
+    ['Q.DATE', d.q_date||''],
+    ['SHIFTING DATE', d.shift_date||'—'],
+    ['Surveyor name', d.surveyor||'S.P'],
+    ['LORRY NO. & TYPE', d.lorry_no||'—'],
+    ['ENQUIRY DATED/NAME', d.enquiry||'—'],
+    ['FROM—TO FLOOR', (d.from_floor||'N/A')+' — '+(d.to_floor||'N/A')],
+  ];
+  let my = y;
+  const MRH = TOP_H/metaRows.length;
+  metaRows.forEach(([k,v],i) => {
+    const rY = my + i*MRH;
+    if(i>0) hline(RX,rY,ML+CW,0.2,[200,200,200]);
+    setFont('bold',7.5,BLACK); doc.text(k,RX+2,rY+MRH/2+1.5);
+    // Special highlight for Lorry No
+    if(k==='LORRY NO. & TYPE' && v && v!=='—'){
+      rect(RX+RW-20,rY+1,18,MRH-2,RED);
+      setFont('bold',7.5,WHITE); doc.text(v,RX+RW-11,rY+MRH/2+1.5,{align:'center'});
+    } else {
+      setFont('bold',7.5,NAVY); doc.text(String(v),ML+CW-2,rY+MRH/2+1.5,{align:'right'});
+    }
+  });
+
+  y += TOP_H;
+  hline(ML,y,ML+CW,0.4);
+
+  // ══ BUYER SECTION ══
+  const BH = 32;
+  vline(ML+LW,y,y+BH,0.4);
+
+  // Left: Buyer info
+  let by = y+3;
+  setFont('bold',7.5,BLACK); doc.text('BUYER',ML+2,by); by+=4;
+  setFont('bold',9,BLACK); doc.text(esc(d.buyer_name||''),ML+2,by); by+=4;
+  setFont('normal',7.5,BLACK); doc.text('ADDRESS FROM— '+esc(d.from_addr||'').replace(/\n/g,' '),ML+2,by); by+=3.8;
+  setFont('bold',8,BLACK); doc.text('MOB: '+(d.buyer_mobile||''),ML+2,by); by+=4;
+  setFont('bold',7.5,BLACK); doc.text('ADDRESS TO—',ML+2,by); by+=3.5;
+  setFont('normal',7.5,BLACK); doc.text(esc(d.to_addr||'').replace(/\n/g,' '),ML+2,by);
+
+  // Right: Floor + Route
+  let rby = y+3;
+  setFont('bold',7.5,BLACK);
+  doc.text('FROM FLOOR',RX+2,rby);
+  setFont('normal',7.5,BLACK);
+  doc.text((d.from_floor||'N/A')+' ('+d.from_lift+')',ML+CW-2,rby,{align:'right'});
+  rby+=5;
+  setFont('bold',7.5,BLACK);
+  doc.text('TO FLOOR',RX+2,rby);
+  setFont('normal',7.5,BLACK);
+  doc.text((d.to_floor||'N/A')+' ('+d.to_lift+')',ML+CW-2,rby,{align:'right'});
+  rby+=7;
+  setFont('normal',6.5,DGRAY); doc.text('DESTINATION THROUGH',RX+RW/2,rby,{align:'center'});
+  rby+=5;
+  setFont('bold',11,RED); doc.text(d.route||'',RX+RW/2,rby,{align:'center'});
+
+  y += BH;
+  hline(ML,y,ML+CW,0.4);
+
+  // ══ ITEMS TABLE ══
+  const COLS = {sl:10, part:100, rate:37, amt:47}; // widths
+  const THH = 6;
+  rect(ML,y,CW,THH,RED);
+  setFont('bold',8,WHITE);
+  let cx = ML;
+  doc.text('Sl',cx+COLS.sl/2,y+4,{align:'center'}); cx+=COLS.sl;
+  doc.text('Particulars',cx+2,y+4); cx+=COLS.part;
+  doc.text('Rate',cx+COLS.rate/2,y+4,{align:'center'}); cx+=COLS.rate;
+  doc.text('Amount',cx+COLS.amt/2,y+4,{align:'center'});
+  y+=THH;
+
+  // Draw column dividers for table
+  const tblX=[ML, ML+COLS.sl, ML+COLS.sl+COLS.part, ML+COLS.sl+COLS.part+COLS.rate, ML+CW];
+
+  const items = d.items||[];
+  items.forEach((item,i)=>{
+    const IH = 7;
+    if(i%2===1) rect(ML,y,CW,IH,[250,250,255]);
+    hline(ML,y,ML+CW,0.2,[200,200,200]);
+    setFont('normal',8,BLACK);
+    doc.text(String(i+1),ML+COLS.sl/2,y+4.5,{align:'center'});
+    // wrap particulars
+    const descLines = doc.splitTextToSize(String(item.desc||''),COLS.part-3);
+    const RH = Math.max(IH, descLines.length*4+3);
+    if(i%2===1) rect(ML,y,CW,RH,[250,250,255]);
+    descLines.forEach((ln,li)=>{ setFont('normal',8,BLACK); doc.text(ln,ML+COLS.sl+2,y+3.5+li*4); });
+    if(item.rate) { setFont('normal',8,BLACK); doc.text('\u20b9'+fmtI(item.rate),ML+COLS.sl+COLS.part+COLS.rate-1,y+4.5,{align:'right'}); }
+    setFont('bold',8,BLACK); doc.text('\u20b9'+fmtI(item.amt),ML+CW-1,y+4.5,{align:'right'});
+    tblX.forEach((x,xi)=>{ if(xi>0&&xi<tblX.length) vline(x,y,y+RH,0.2); });
+    y+=RH;
+  });
+
+  // Spacer row
+  const spacerH = Math.max(8, 30 - items.length*7);
+  y+=spacerH;
+  hline(ML,y,ML+CW,0.5);
+
+  // SUB TOTAL
+  rect(ML,y,CW,6,LGRAY);
+  setFont('bold',8.5,BLACK); doc.text('SUB TOTAL —',tblX[3]-2,y+4,{align:'right'});
+  doc.text('\u20b9'+fmtI(d.total)+'.00',ML+CW-1,y+4,{align:'right'});
+  y+=6; hline(ML,y,ML+CW,0.3);
+
+  // GST note
+  if(d.gst_note){
+    rect(ML,y,CW,5,[255,248,232]);
+    setFont('bold',7.5,[124,58,0]); doc.text(d.gst_note,ML+2,y+3.5);
+    y+=5; hline(ML,y,ML+CW,0.3);
+  }
+
+  // Payment split
+  if(d.p1&&d.p2){
+    rect(ML,y,CW,6);
+    setFont('bold',8,RED); doc.text(d.p1+'% ON THE LOADING POINT — \u20b9'+fmtI(d.a1),ML+2,y+4);
+    y+=6; hline(ML,y,ML+CW,0.2,[200,200,200]);
+    setFont('bold',8,BLACK); doc.text(d.p2+'% AFTER WORK DONE — \u20b9'+fmtI(d.a2),ML+2,y+4);
+    y+=6; hline(ML,y,ML+CW,0.3);
+  }
+
+  // GRAND TOTAL
+  rect(ML,y,CW,8,NAVY);
+  setFont('bold',11,WHITE); doc.text('GRAND TOTAL',ML+3,y+5.5);
+  doc.text('\u20b9'+fmtI(d.total)+'.00',ML+CW-2,y+5.5,{align:'right'});
+  y+=8; hline(ML,y,ML+CW,0.5);
+
+  // AMOUNT IN WORDS
+  rect(ML,y,CW,8,[248,250,252]);
+  setFont('bold',7.5,BLACK); doc.text('AMOUNT IN WORDS:',ML+2,y+3.5);
+  setFont('normal',7.5,BLACK); doc.text(n2w(d.total),ML+2,y+7,{});
+  y+=9; hline(ML,y,ML+CW,0.4);
+
+  // NOTES
+  rect(ML,y,CW,5.5);
+  setFont('bold',7.5,RED); doc.text('NOTE :- NO EXTRA MONEY (BAKSHISH) NEED TO GIVE LABOUR.',ML+2,y+3.5);
+  y+=5.5; hline(ML,y,ML+CW,0.2,[200,200,200]);
+  setFont('bold',7.5,[153,27,27]); doc.text('NOTE:- ELECTRICIAN WORK IS NOT INCLUDED.'+(d.remarks?' | '+d.remarks:''),ML+2,y+3.5);
+  y+=5.5; hline(ML,y,ML+CW,0.4);
+
+  // OPERATIONAL DETAILS TABLE (2 columns)
+  const opRows=[
+    ['FROM FLOOR',(d.from_floor||'N/A')+' ('+d.from_lift+')'],
+    ['TO FLOOR',(d.to_floor||'N/A')+' ('+d.to_lift+')'],
+    ['PROVIDE IBA BILL.',''],
+    ['PACKING DATE & TIME',d.pack_date||''],
+    ['DATE OF LOADING',d.date_load||''],
+    ['LORRY LOADING PLACE "NO ENTRY ZONE"',d.no_entry||'YES/NO'],
+    ['LORRY DISTANCE AT LOADING',d.dist_load?d.dist_load+' MTR.':'MTR.'],
+    ['LORRY DISTANCE AT UNLOADING',d.dist_unload?d.dist_unload+' MTR.':'MTR.'],
+  ];
+  opRows.forEach(([k,v])=>{
+    const OH=5.5;
+    rect(ML,y,CW*0.6,OH,LGRAY);
+    setFont('bold',7,BLACK); doc.text(k,ML+2,y+3.5);
+    setFont('normal',7,BLACK); doc.text(String(v),ML+CW-2,y+3.5,{align:'right'});
+    vline(ML+CW*0.6,y,y+OH,0.3);
+    y+=OH; hline(ML,y,ML+CW,0.2,[200,200,200]);
+  });
+  hline(ML,y,ML+CW,0.4);
+
+  // SAFETY NOTES
+  const snH=10;
+  rect(ML,y,CW,snH,[255,255,255]);
+  setFont('bold',7.5,RED); doc.text('NOTE:—',ML+CW/2,y+3.5,{align:'center'});
+  setFont('normal',7,[50,50,50]);
+  doc.text("PLEASE KEEP YOUR CASH / JEWELLERY's AND ANY OTHER PRECIOUS THING IN YOUR CUSTODY/LOCK.",ML+CW/2,y+7,{align:'center'});
+  y+=snH; hline(ML,y,ML+CW,0.3);
+  setFont('normal',7,[50,50,50]);
+  doc.text('CARRING LIQUOR, GAS CYLINDER, ACID AND ANY TYPE OF LIQUIDS (LIKE GHEE, OIL TIN etc.) IS TOTALLY PROHIBITED.',ML+CW/2,y+4,{align:'center'});
+  y+=6; hline(ML,y,ML+CW,0.5);
+
+  // IBA BILL AVAILABLE
+  rect(ML,y,CW,8,NAVY);
+  setFont('bold',12,WHITE); doc.text('IBA BILL AVAILABLE',PW/2,y+5.5,{align:'center'});
+  y+=8; hline(ML,y,ML+CW,0.5);
+
+  // BANK DETAILS
+  const BNK_H = 18;
+  const gstW = 42;
+  rect(ML,y,gstW,BNK_H,LGRAY);
+  vline(ML+gstW,y,y+BNK_H,0.4);
+  setFont('bold',7.5,BLACK); doc.text('GST NO.',ML+2,y+4);
+  setFont('bold',7.5,NAVY); doc.text(CO.gst,ML+2,y+8);
+  const bx=ML+gstW+2;
+  setFont('bold',7.5,BLACK); doc.text("Company's Bank Details",bx,y+4);
+  setFont('normal',7.5,BLACK);
+  doc.text('Bank Name: '+CO.bank,bx,y+8);
+  doc.text('A/c No.: '+CO.acc,bx,y+12);
+  doc.text('IFS Code: '+CO.ifsc+'   NEFT / RTGS / GOOGLE PAY / PHONE PAY',bx,y+16);
+  y+=BNK_H; hline(ML,y,ML+CW,0.5);
+
+  // FOOTER
+  const FH=16;
+  setFont('normal',7.5,BLACK); doc.text('for '+CO.name,ML+2,y+4);
+  setFont('bold',8,BLACK); doc.text('Varanasi',ML+2,y+8);
+  hline(ML+CW-45,y+FH-3,ML+CW-2,0.4);
+  setFont('normal',7,[100,100,100]); doc.text('Authorised Signature',ML+CW-24,y+FH,{align:'center'});
+  y+=FH; hline(ML,y,ML+CW,0.5);
+
+  // FINAL LINE
+  setFont('normal',6.5,DGRAY);
+  doc.text('SUBJECT TO VARANASI JURISDICTION  |  This is a Computer Generated Quotation',PW/2,y+4,{align:'center'});
+
+  // ── SAVE ──
+  showPdfOverlay(false);
+  doc.save(d.filename+'.pdf');
+  showToast('✅ PDF saved: '+d.filename+'.pdf');
+}
+
+
+// ══════════════════════════════════════════
+// EXCEL DOWNLOAD
+// ══════════════════════════════════════════
+function dlExcel(d) {
+  if(!d) d = getData();
+  const SHEET_TYPE = typeof FORM_TYPE !== 'undefined' ? FORM_TYPE : 'QUOTATION';
+  const ws = {};
+  const merges = [];
+  let R = 0;
+  const S = {
+    title: {font:{bold:true,sz:14,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'CC0000'}},alignment:{horizontal:'center'},border:{top:{style:'medium'},bottom:{style:'medium'},left:{style:'medium'},right:{style:'medium'}}},
+    hdr:   {font:{bold:true,sz:9,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1A3C5E'}},alignment:{horizontal:'center'},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+    lbl:   {font:{bold:true,sz:9},fill:{fgColor:{rgb:'F0F0F0'}},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+    val:   {font:{sz:9},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+    bval:  {font:{bold:true,sz:9},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+    amt:   {font:{bold:true,sz:9},numFmt:'\u20b9#,##0.00',alignment:{horizontal:'right'},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+    sub:   {font:{bold:true,sz:9},fill:{fgColor:{rgb:'F5F5F5'}},alignment:{horizontal:'right'},border:{top:{style:'medium'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+    grand: {font:{bold:true,sz:11,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1A3C5E'}},numFmt:'\u20b9#,##0.00',alignment:{horizontal:'right'},border:{top:{style:'medium'},bottom:{style:'medium'},left:{style:'medium'},right:{style:'medium'}}},
+    iba:   {font:{bold:true,sz:13,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1A3C5E'}},alignment:{horizontal:'center'},border:{top:{style:'medium'},bottom:{style:'medium'},left:{style:'medium'},right:{style:'medium'}}},
+    foot:  {font:{sz:8,color:{rgb:'555555'}},alignment:{horizontal:'center'},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+    note:  {font:{bold:true,sz:8,color:{rgb:'CC0000'}},alignment:{wrapText:true},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'thin'},right:{style:'thin'}}},
+  };
+  function c(v,s){return {v:v,s:s,t:typeof v==='number'?'n':'s'};}
+  function b(s){return c('',s||S.val);}
+  function sc(col,row,cell){ws[XLSX.utils.encode_cell({c:col,r:row})]=cell;}
+  function mg(rs,re,cs,ce){merges.push({s:{r:rs,c:cs},e:{r:re,c:ce}});}
+  const NC=6;
+
+  // TITLE
+  sc(0,R,c(SHEET_TYPE==='INVOICE'?'INVOICE':'QUOTATION',S.title));
+  mg(R,R,0,NC-1);for(let i=1;i<NC;i++)sc(i,R,b(S.title));R++;
+
+  // Company + meta rows
+  const co_style={font:{bold:true,sz:11,color:{rgb:'1A3C5E'}},border:{top:{style:'thin'},bottom:{style:'thin'},left:{style:'medium'},right:{style:'thin'}}};
+  sc(0,R,c(CO.name,co_style));mg(R,R,0,2);
+  sc(3,R,c(SHEET_TYPE==='INVOICE'?'INV NO.':'Q.NO',S.lbl));
+  sc(4,R,c(SHEET_TYPE==='INVOICE'?d.inv_no:d.q_no,S.bval));mg(R,R,4,5);R++;
+  const compRows=[CO.addr,CO.mob,CO.email,CO.iso,"VALID FOR 7 DAY'S"];
+  const metaKeys=SHEET_TYPE==='INVOICE'
+    ?[['DATE',d.inv_date],['DEL.NOTE',d.delivery_note],['C.NO',d.cno],['LORRY','CAR BY CARRIER']]
+    :[['Q.DATE',d.q_date],['SHIFTING',d.shift_date],['SURVEYOR',d.surveyor],['LORRY NO.',d.lorry_no],['ENQUIRY',d.enquiry]];
+  const maxRows=Math.max(compRows.length,metaKeys.length);
+  for(let i=0;i<maxRows;i++){
+    if(i<compRows.length){sc(0,R,c(compRows[i],S.val));mg(R,R,0,2);}else{mg(R,R,0,2);sc(0,R,b());}
+    if(i<metaKeys.length){sc(3,R,c(metaKeys[i][0],S.lbl));sc(4,R,c(metaKeys[i][1],{...S.bval,alignment:{horizontal:'right'}}));mg(R,R,4,5);}else{sc(3,R,b());mg(R,R,4,5);}
+    R++;
+  }
+
+  // Buyer
+  sc(0,R,c('BUYER',{...S.lbl,font:{bold:true,sz:10,color:{rgb:'1A3C5E'}}}));mg(R,R,0,NC-1);R++;
+  sc(0,R,c(d.buyer_name,S.bval));mg(R,R,0,2);
+  sc(3,R,c(SHEET_TYPE==='INVOICE'?'DEST NAME':' FROM FLOOR',S.lbl));
+  sc(4,R,c(SHEET_TYPE==='INVOICE'?d.dest_name:(d.from_floor||'N/A')+' ('+d.from_lift+')',S.val));mg(R,R,4,5);R++;
+  sc(0,R,c(SHEET_TYPE==='INVOICE'?d.buyer_address:d.from_addr,{...S.val,alignment:{wrapText:true}}));mg(R,R,0,2);
+  sc(3,R,c(SHEET_TYPE==='INVOICE'?'DEST ADDR':'TO FLOOR',S.lbl));
+  sc(4,R,c(SHEET_TYPE==='INVOICE'?d.dest_address:(d.to_floor||'N/A')+' ('+d.to_lift+')',S.val));mg(R,R,4,5);R++;
+  sc(0,R,c('MOB: '+d.buyer_mobile,S.bval));mg(R,R,0,2);
+  sc(3,R,c('ROUTE',S.lbl));sc(4,R,c(d.route,{...S.bval,font:{bold:true,sz:11,color:{rgb:'CC0000'}}}));mg(R,R,4,5);R++;
+  sc(0,R,c(SHEET_TYPE==='INVOICE'?('TO: '+d.dest_name):d.to_addr,{...S.val,alignment:{wrapText:true}}));mg(R,R,0,NC-1);R++;
+
+  // Table header
+  sc(0,R,c('Sl',S.hdr));sc(1,R,c('Particulars',S.hdr));mg(R,R,1,3);
+  sc(4,R,c('Rate',{...S.hdr,alignment:{horizontal:'right'}}));
+  sc(5,R,c('Amount',{...S.hdr,alignment:{horizontal:'right'}}));R++;
+
+  // Items
+  const items=SHEET_TYPE==='INVOICE'
+    ?[{num:1,desc:'CAR NO.— '+d.car_no+'  TRANSPORTATION CHARGES',rate:0,amt:d.base}]
+    :(d.items||[]);
+  items.forEach((item,i)=>{
+    sc(0,R,c(i+1,{...S.val,alignment:{horizontal:'center'}}));
+    sc(1,R,c(item.desc,{...S.val,alignment:{wrapText:true}}));mg(R,R,1,3);
+    sc(4,R,c(item.rate||'',item.rate?S.amt:S.val));
+    sc(5,R,c(item.amt,S.amt));R++;
+  });
+  for(let s=0;s<2;s++){sc(0,R,b());mg(R,R,0,NC-1);R++;}
+
+  // Totals
+  sc(0,R,c('SUB TOTAL',S.sub));mg(R,R,0,4);sc(5,R,c(SHEET_TYPE==='INVOICE'?d.base:d.total,{...S.sub,numFmt:'\u20b9#,##0.00'}));R++;
+  if(SHEET_TYPE==='INVOICE'&&d.pct>0){
+    sc(0,R,c('IGST '+d.pct+'%',S.val));mg(R,R,0,4);sc(5,R,c(d.igst,S.amt));R++;
+  } else if(d.gst_note){
+    sc(0,R,c(d.gst_note,S.note));mg(R,R,0,NC-1);R++;
+  }
+  if(SHEET_TYPE==='QUOTATION'&&d.p1){
+    sc(0,R,c(d.p1+'% LOADING — \u20b9'+fmtI(d.a1),S.note));mg(R,R,0,NC-1);R++;
+    sc(0,R,c(d.p2+'% AFTER WORK — \u20b9'+fmtI(d.a2),S.val));mg(R,R,0,NC-1);R++;
+  }
+  sc(0,R,c('GRAND TOTAL',S.grand));mg(R,R,0,4);
+  for(let i=1;i<5;i++)sc(i,R,b(S.grand));
+  sc(5,R,c(d.total,{...S.grand,numFmt:'\u20b9#,##0.00',alignment:{horizontal:'right'}}));R++;
+
+  sc(0,R,c('AMOUNT IN WORDS: '+n2w(d.total),{...S.val,font:{bold:true,sz:9}}));mg(R,R,0,NC-1);R++;
+
+  // Remarks/Notes
+  if(SHEET_TYPE==='QUOTATION'){
+    sc(0,R,c('NOTE: NO EXTRA MONEY (BAKSHISH). ELECTRICIAN WORK NOT INCLUDED.'+(d.remarks?' | '+d.remarks:''),S.note));mg(R,R,0,NC-1);R++;
+    [['FROM FLOOR',(d.from_floor||'N/A')+' ('+d.from_lift+')'],['TO FLOOR',(d.to_floor||'N/A')+' ('+d.to_lift+')'],
+     ['PROVIDE IBA BILL',''],['PACKING DATE & TIME',d.pack_date||''],['DATE OF LOADING',d.date_load||''],
+     ['NO ENTRY ZONE',d.no_entry||''],['DIST AT LOADING',d.dist_load||''],['DIST AT UNLOADING',d.dist_unload||'']
+    ].forEach(([k,v])=>{sc(0,R,c(k,S.lbl));mg(R,R,0,3);sc(4,R,c(v,S.val));mg(R,R,4,5);R++;});
+    sc(0,R,c('IBA BILL AVAILABLE',S.iba));mg(R,R,0,NC-1);R++;
+  } else {
+    sc(0,R,c('Remarks: '+d.remarks,{...S.val,font:{italic:true,sz:9,color:{rgb:'B8800A'}}}));mg(R,R,0,2);
+    sc(3,R,c('PAYMENT: '+d.payment_method,S.bval));mg(R,R,3,NC-1);R++;
+  }
+
+  // Bank
+  sc(0,R,c('GST: '+CO.gst,S.lbl));mg(R,R,0,1);
+  sc(2,R,c("Bank: "+CO.bank+" | A/c: "+CO.acc+" | "+CO.ifsc+" | NEFT/RTGS/GPay",S.val));mg(R,R,2,NC-1);R++;
+  sc(0,R,c('SUBJECT TO VARANASI JURISDICTION | Computer Generated '+SHEET_TYPE,S.foot));mg(R,R,0,NC-1);R++;
+
+  ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R-1,c:NC-1}});
+  ws['!merges']=merges;
+  ws['!cols']=[{wch:6},{wch:22},{wch:16},{wch:16},{wch:16},{wch:14}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,SHEET_TYPE==='INVOICE'?'Invoice':'Quotation');
+  XLSX.writeFile(wb,d.filename+'.xlsx');
+  showToast('📊 Excel: '+d.filename+'.xlsx');
+}
+
+</script>
+</body>
+</html>
